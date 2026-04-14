@@ -1,0 +1,12 @@
+{
+  "name": "NAS Budget",
+  "short_name": "NAS",
+  "description": "Monthly budget grid — bills by month, totals, and balance",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#e8f4e6",
+  "theme_color": "#2d7a3e",
+  "categories": ["finance", "productivity"]
+}

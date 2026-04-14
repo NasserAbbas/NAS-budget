@@ -1,0 +1,65 @@
+{
+  "name": "nas-desktop",
+  "version": "1.0.0",
+  "private": true,
+  "description": "NAS Budget desktop app",
+  "author": "NAS",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "check": "node --check app.js && node --check main.js",
+    "build:icons": "node scripts/generate-icon.js",
+    "dist": "npm run build:icons && electron-builder --win && node scripts/copy-readme-to-dist.js",
+    "dist:dir": "npm run build:icons && electron-builder --win dir && node scripts/copy-readme-to-dist.js"
+  },
+  "devDependencies": {
+    "electron": "^41.2.0",
+    "electron-builder": "^26.0.12",
+    "png-to-ico": "^2.1.8",
+    "rcedit": "4.0.1",
+    "sharp": "^0.34.5"
+  },
+  "build": {
+    "appId": "com.nas.budget",
+    "productName": "NAS Budget",
+    "copyright": "Copyright © NAS",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "**/*",
+      "!dist/**",
+      "!**/*.md"
+    ],
+    "afterPack": "./scripts/after-pack.js",
+    "extraFiles": [
+      {
+        "from": "README.md",
+        "to": "README.md"
+      }
+    ],
+    "win": {
+      "signAndEditExecutable": false,
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "NAS Budget",
+      "installerIcon": "build/icon.ico",
+      "uninstallerIcon": "build/icon.ico"
+    }
+  }
+}

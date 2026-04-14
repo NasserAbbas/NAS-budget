@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="green">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta id="meta-theme-color" name="theme-color" content="#2d7a3e" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="NAS" />
+  <title>NAS — Budget</title>
+  <link rel="icon" type="image/png" href="assets/logo.png" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,600;0,9..40,700;1,9..40,400&family=Noto+Sans+Arabic:wght@400;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div class="app">
+    <header class="header">
+      <div class="header-inner">
+        <h1 class="logo">
+          <img class="logo-img" src="assets/logo.png" alt="NAS Budget" />
+        </h1>
+      </div>
+      <div class="header-actions">
+        <label class="year-label">
+          <span class="sr-only" id="i18n-year-sr">Budget year</span>
+          <input type="number" id="budget-year" min="2000" max="2100" step="1" class="year-input" aria-labelledby="i18n-year-sr" />
+        </label>
+        <button type="button" class="btn btn-ghost btn-reset-year" id="btn-reset-year"></button>
+        <div class="lang-switch" id="lang-switch" role="group" aria-label="Language">
+          <button type="button" class="btn btn-lang" data-locale="en" id="lang-en">EN</button>
+          <button type="button" class="btn btn-lang" data-locale="nl" id="lang-nl">NL</button>
+          <button type="button" class="btn btn-lang" data-locale="ar" id="lang-ar">عربي</button>
+        </div>
+        <label class="theme-picker">
+          <span class="sr-only" id="i18n-theme-sr">Theme</span>
+          <select id="theme" aria-labelledby="i18n-theme-sr">
+            <option value="green" id="theme-opt-green" selected>Theme 1</option>
+            <option value="paper" id="theme-opt-paper">Theme 2</option>
+            <option value="dark" id="theme-opt-dark">Theme 3</option>
+          </select>
+        </label>
+        <label class="currency-picker">
+          <span class="sr-only" id="i18n-currency-sr">Currency</span>
+          <select id="currency" aria-labelledby="i18n-currency-sr">
+            <option value="$">$ USD</option>
+            <option value="€">€ EUR</option>
+            <option value="£">£ GBP</option>
+            <option value="" id="currency-opt-none">— None</option>
+          </select>
+        </label>
+        <button type="button" class="btn btn-ghost btn-with-icon icon-print" id="btn-print"></button>
+        <button type="button" class="btn btn-ghost" id="btn-export">Export</button>
+        <label class="btn btn-ghost file-label">
+          <span id="i18n-import-label">Import</span>
+          <input type="file" id="import-file" accept=".json,application/json,.csv,text/csv" hidden />
+        </label>
+      </div>
+    </header>
+
+    <main class="main">
+      <p class="hint" id="i18n-hint"></p>
+
+      <div class="panel panel-grid">
+        <div class="panel-head">
+          <div class="panel-title-group">
+            <h2 class="panel-title" id="i18n-panel-title"></h2>
+            <span class="title-banner" id="title-banner">Budget 2026</span>
+          </div>
+          <div class="panel-tools">
+            <label class="panel-search" for="bill-search">
+              <span class="sr-only" id="i18n-bill-search-label">Search bills</span>
+              <input type="search" id="bill-search" class="panel-search-input" />
+            </label>
+            <div class="panel-filters" id="bill-filters" role="group" aria-label="Bill filters">
+              <button type="button" class="panel-filter-chip is-active" data-filter="all" id="filter-all">All</button>
+              <button type="button" class="panel-filter-chip" data-filter="high" id="filter-high">High spending</button>
+            </div>
+          </div>
+        </div>
+        <div class="trend-insights" id="trend-insights" aria-live="polite"></div>
+        <div class="table-scroll" id="grid-scroll">
+          <table class="budget-grid sheet-fit" id="budget-table">
+            <colgroup>
+              <col class="sheet-c-bill" />
+              <col class="sheet-c-ref" />
+              <col span="12" class="sheet-c-mo" />
+              <col class="sheet-c-tot" />
+              <col class="sheet-c-cmt" />
+              <col class="sheet-c-act" />
+            </colgroup>
+            <thead>
+              <tr>
+                <th class="sticky-col th-bill" scope="col" id="th-bill" colspan="2"></th>
+                <th scope="col" class="th-mo" data-mo="0"></th>
+                <th scope="col" class="th-mo" data-mo="1"></th>
+                <th scope="col" class="th-mo" data-mo="2"></th>
+                <th scope="col" class="th-mo" data-mo="3"></th>
+                <th scope="col" class="th-mo" data-mo="4"></th>
+                <th scope="col" class="th-mo" data-mo="5"></th>
+                <th scope="col" class="th-mo" data-mo="6"></th>
+                <th scope="col" class="th-mo" data-mo="7"></th>
+                <th scope="col" class="th-mo" data-mo="8"></th>
+                <th scope="col" class="th-mo" data-mo="9"></th>
+                <th scope="col" class="th-mo" data-mo="10"></th>
+                <th scope="col" class="th-mo" data-mo="11"></th>
+                <th scope="col" class="th-total" id="th-total"></th>
+                <th scope="col" class="th-comment" id="th-comment">
+                  <span class="th-comment-label" id="th-comment-label"></span>
+                </th>
+                <th scope="col" class="th-actions" id="th-actions" aria-label="">
+                  <div class="th-actions-head">
+                    <button type="button" class="btn btn-small btn-add th-actions-add" id="btn-add-cat"></button>
+                  </div>
+                </th>
+              </tr>
+              <tr id="salary-block" class="row-salary sheet-salary-row"></tr>
+            </thead>
+            <tbody id="grid-body"></tbody>
+            <tbody id="footer-block"></tbody>
+            <tbody id="chart-block" aria-label=""></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="cell-note-dialog" class="cell-note-dialog" hidden>
+        <div class="cell-note-dialog-box">
+          <div class="cell-note-dialog-head">
+            <h3 class="cell-note-dialog-title" id="cell-note-title"></h3>
+            <button type="button" class="cell-note-close" id="cell-note-cancel" aria-label="Close">×</button>
+          </div>
+          <textarea id="cell-note-text" class="cell-note-textarea" rows="4"></textarea>
+        </div>
+      </div>
+
+      <div id="year-template-dialog" class="year-template-dialog" hidden>
+        <div class="year-template-dialog-box">
+          <div class="year-template-dialog-head">
+            <h3 class="year-template-dialog-title" id="year-template-title"></h3>
+            <button type="button" class="cell-note-close" id="year-template-cancel" aria-label="Close">×</button>
+          </div>
+          <p class="year-template-dialog-text" id="year-template-text"></p>
+          <div class="year-template-dialog-actions">
+            <button type="button" class="year-template-option" id="year-template-empty"></button>
+            <button type="button" class="year-template-option" id="year-template-names"></button>
+            <button type="button" class="year-template-option" id="year-template-recurring"></button>
+            <button type="button" class="year-template-option" id="year-template-full"></button>
+          </div>
+        </div>
+      </div>
+
+      <div id="cell-context-menu" class="cell-context-menu" hidden>
+        <button type="button" id="cell-context-cut" class="cell-context-menu-item"></button>
+        <button type="button" id="cell-context-copy" class="cell-context-menu-item"></button>
+        <button type="button" id="cell-context-paste" class="cell-context-menu-item"></button>
+        <button type="button" id="cell-context-add-comment" class="cell-context-menu-item"></button>
+        <button type="button" id="cell-context-delete-comment" class="cell-context-menu-item" hidden></button>
+      </div>
+
+      <div id="year-actions-menu" class="year-actions-menu" hidden>
+        <button type="button" id="year-action-reset" class="year-actions-menu-item icon-reset"></button>
+        <button type="button" id="year-action-undo-reset" class="year-actions-menu-item icon-undo"></button>
+        <button type="button" id="year-action-empty-next" class="year-actions-menu-item icon-empty"></button>
+        <button type="button" id="year-action-names-next" class="year-actions-menu-item icon-names"></button>
+        <button type="button" id="year-action-recurring-next" class="year-actions-menu-item icon-recurring"></button>
+        <button type="button" id="year-action-copy-next" class="year-actions-menu-item icon-copy"></button>
+      </div>
+
+      <section class="panel panel-years">
+        <div class="panel-head">
+          <h2 class="panel-title panel-title-icon icon-backups-panel" id="i18n-years-title"></h2>
+        </div>
+        <div class="year-list" id="year-list" aria-live="polite"></div>
+      </section>
+
+      <section class="panel panel-notes">
+        <label class="field field-notes">
+          <span id="i18n-notes-label"></span>
+          <textarea id="notes" rows="3"></textarea>
+        </label>
+      </section>
+
+      <section class="panel panel-trash">
+        <div class="panel-head">
+          <h2 class="panel-title panel-title-icon icon-trash-panel" id="i18n-trash-title"></h2>
+          <button type="button" class="btn btn-ghost btn-small btn-with-icon icon-trash-clear" id="btn-clear-trash"></button>
+        </div>
+        <div class="trash-list" id="trash-list" aria-live="polite"></div>
+      </section>
+
+      <section class="panel panel-backups">
+        <div class="panel-head">
+          <h2 class="panel-title panel-title-icon icon-backups-panel" id="i18n-backups-title"></h2>
+          <div class="panel-backups-actions">
+            <button type="button" class="btn btn-ghost btn-small btn-with-icon icon-manual-backup" id="btn-backup-now"></button>
+            <button type="button" class="btn btn-ghost btn-small btn-with-icon icon-backups-clear" id="btn-clear-backups"></button>
+          </div>
+        </div>
+        <div class="backup-list" id="backup-list" aria-live="polite"></div>
+      </section>
+    </main>
+
+    <footer class="footer-save">
+      <div class="save-actions">
+        <p class="saved" id="save-status" aria-live="polite"></p>
+        <button type="button" class="btn btn-ghost btn-undo" id="btn-undo-delete" hidden></button>
+      </div>
+    </footer>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
