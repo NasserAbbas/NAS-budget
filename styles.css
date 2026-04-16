@@ -13,6 +13,13 @@
   --tap: 44px;
   --font: "DM Sans", system-ui, sans-serif;
   --paper-texture-url: url("assets/paper-texture.svg");
+  /* Sticky budget thead above tbody row-comment / note cells on hover */
+  --budget-z-tbody-cell-raise: 40;
+  --budget-z-sticky-thead: 48;
+  --budget-z-sticky-thead-edge: 49;
+  --budget-z-sticky-salary-row: 50;
+  --budget-z-sticky-salary-edge: 51;
+  --budget-z-sticky-salary-focus: 52;
 }
 
 html[data-theme="paper"] {
@@ -438,12 +445,6 @@ html[data-theme="paper"] .btn-add:focus-visible {
   box-shadow: 0 0 0 2px rgba(92, 68, 54, 0.5);
 }
 
-.file-label {
-  display: inline-flex;
-  align-items: center;
-  cursor: pointer;
-}
-
 .main {
   flex: 1;
   min-height: 0;
@@ -778,7 +779,7 @@ html[data-theme="paper"] .panel-backups .panel-head {
 .budget-grid thead th {
   position: sticky;
   top: 0;
-  z-index: 8;
+  z-index: var(--budget-z-sticky-thead);
   background: #b8dfb2;
   color: #153c1c;
   font-weight: 600;
@@ -796,7 +797,7 @@ html[data-theme="paper"] .panel-backups .panel-head {
 
 .budget-grid .th-bill,
 .budget-grid .th-ref {
-  z-index: 5;
+  z-index: var(--budget-z-sticky-thead);
   text-align: start;
 }
 
@@ -1065,13 +1066,13 @@ html[lang="nl"] .panel-grid .budget-grid.sheet-fit .th-actions-add {
 }
 
 .budget-grid thead .sticky-col {
-  z-index: 6;
+  z-index: var(--budget-z-sticky-thead-edge);
   background: #b8dfb2;
   box-shadow: 4px 0 8px rgba(46, 91, 48, 0.08);
 }
 
 .budget-grid thead .sticky-col2 {
-  z-index: 6;
+  z-index: var(--budget-z-sticky-thead-edge);
   background: #b8dfb2;
 }
 
@@ -1514,25 +1515,25 @@ html[data-theme="paper"] .chart-bar-plot {
 .panel-grid .budget-grid tbody td.cell-mo:has(.mo-cell.has-note:hover),
 .panel-grid .budget-grid tbody td.cell-mo:has(.mo-cell.has-note:focus-within) {
   position: relative;
-  z-index: 40;
+  z-index: var(--budget-z-tbody-cell-raise);
 }
 
 .panel-grid .budget-grid tbody td.cell-row-comment:has(.mo-cell-row-comment:hover),
 .panel-grid .budget-grid tbody td.cell-row-comment:has(.mo-cell-row-comment:focus-within) {
   position: relative;
-  z-index: 40;
+  z-index: var(--budget-z-tbody-cell-raise);
 }
 
 .budget-grid thead .sheet-salary-row td.cell-row-comment-salary:has(.mo-cell-row-comment:hover),
 .budget-grid thead .sheet-salary-row td.cell-row-comment-salary:has(.mo-cell-row-comment:focus-within) {
   position: relative;
-  z-index: 50 !important;
+  z-index: var(--budget-z-sticky-salary-focus) !important;
 }
 
 .budget-grid thead .sheet-salary-row td.cell-mo:has(.mo-cell.has-note:hover),
 .budget-grid thead .sheet-salary-row td.cell-mo:has(.mo-cell.has-note:focus-within) {
   position: relative;
-  z-index: 50 !important;
+  z-index: var(--budget-z-sticky-salary-focus) !important;
 }
 
 .panel-grid .budget-grid.sheet-fit .cell-note-indicator {
@@ -1563,7 +1564,7 @@ html[data-theme="paper"] .chart-bar-plot {
   border-bottom: 1px solid #9fcf98;
   position: sticky;
   top: var(--budget-sticky-header-height, 0px);
-  z-index: 9;
+  z-index: var(--budget-z-sticky-salary-row);
 }
 
 .budget-grid thead .sheet-salary-row .sticky-col,
@@ -1571,7 +1572,7 @@ html[data-theme="paper"] .chart-bar-plot {
 .budget-grid thead .sheet-salary-row .col-span-sticky {
   background: #d2edd0 !important;
   box-shadow: 4px 0 10px rgba(46, 91, 48, 0.06);
-  z-index: 11;
+  z-index: var(--budget-z-sticky-salary-edge);
 }
 
 .budget-grid thead .sheet-salary-row .cell-input {

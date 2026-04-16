@@ -2,6 +2,10 @@ const { app, BrowserWindow, nativeImage, Menu } = require("electron");
 const fs = require("fs");
 const path = require("path");
 
+if (!app.isPackaged) {
+  app.commandLine.appendSwitch("disable-http-cache");
+}
+
 function resolveIconPath() {
   const assetsIco = path.join(__dirname, "assets", "app.ico");
   const assetsPng = path.join(__dirname, "assets", "logo.png");
@@ -81,7 +85,28 @@ function createWindow() {
     },
   });
 
-  win.loadFile(path.join(__dirname, "index.html"));
+  win.webContents.on("did-finish-load", () => {
+    const logoPath = path.join(__dirname, "assets", "logo.png");
+    let mtime = Date.now();
+    try {
+      mtime = fs.statSync(logoPath).mtimeMs;
+    } catch (_) {
+      /* assets may be missing until first build:icons */
+    }
+    const bust = String(mtime) + "-" + String(Date.now());
+    const js =
+      "(function(){var v=" +
+      JSON.stringify(bust) +
+      ';var f=document.getElementById("favicon");if(f)f.setAttribute("href","assets/logo.png?v="+encodeURIComponent(v));var l=document.querySelector(".logo-img");if(l)l.setAttribute("src","assets/logo.png?v="+encodeURIComponent(v));})();';
+    win.webContents.executeJavaScript(js, true).catch(() => {});
+  });
+
+  win.webContents.session
+    .clearCache()
+    .catch(() => {})
+    .finally(() => {
+      win.loadFile(path.join(__dirname, "index.html"));
+    });
 }
 
 app.whenReady().then(() => {

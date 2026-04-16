@@ -46,10 +46,8 @@
       yearCopiedToNext: "Copied to next year",
       maxYearReached: "Maximum year reached",
       langGroup: "Language",
-      printPdf: "Print / PDF",
-      export: "Export",
-      import: "Import",
-      hint: "Scroll sideways on your phone. Totals work like your sheet: each row sums across months; each month sums down the column. Import JSON or a Google Sheet CSV (File → Download → Comma-separated values).",
+      printPdf: "Print / Save as PDF",
+      hint: "Scroll sideways on your phone. Totals work like your sheet: each row sums across months; each month sums down the column. Use Print / Save as PDF and choose “Save as PDF” (or your printer) to keep a copy.",
       panelExpenses: "Expenses by month",
       searchBills: "Search bills",
       searchBillsPlaceholder: "Search bill names...",
@@ -159,8 +157,6 @@
       monthCopied: "Month copied",
       saved: "Saved",
       couldNotSave: "Could not save",
-      badImport: "Unrecognized file format.",
-      badJson: "Could not read JSON.",
       colComment: "Comment",
       salaryShort: "Budget / Salary",
       cellCommentAria: "Comment on this cell",
@@ -209,10 +205,8 @@
       yearCopiedToNext: "تم النسخ إلى السنة التالية",
       maxYearReached: "تم الوصول إلى الحد الأقصى للسنة",
       langGroup: "اللغة",
-      printPdf: "طباعة / PDF",
-      export: "تصدير",
-      import: "استيراد",
-      hint: "مرّر الجدول أفقيًا على الهاتف. المجاميع كالجدول: كل صف يجمع الأشهر؛ كل عمود يجمع المصروفات في ذلك الشهر. يمكن استيراد JSON أو CSV من جداول Google (ملف → تنزيل).",
+      printPdf: "طباعة / حفظ PDF",
+      hint: "مرّر الجدول أفقيًا على الهاتف. المجاميع كالجدول: كل صف يجمع الأشهر؛ كل عمود يجمع المصروفات في ذلك الشهر. استخدم طباعة / حفظ PDF واختر «حفظ كـ PDF» (أو الطابعة) للاحتفاظ بنسخة.",
       panelExpenses: "المصروفات حسب الشهر",
       searchBills: "البحث في الفواتير",
       searchBillsPlaceholder: "ابحث عن اسم الفاتورة...",
@@ -322,8 +316,6 @@
       monthCopied: "تم نسخ الشهر",
       saved: "تم الحفظ",
       couldNotSave: "تعذّر الحفظ",
-      badImport: "صيغة الملف غير معروفة.",
-      badJson: "تعذّر قراءة JSON.",
       colComment: "تعليق",
       salaryShort: "الراتب/ الميزانية",
       cellCommentAria: "تعليق على هذه الخانة",
@@ -372,10 +364,8 @@
       yearCopiedToNext: "Gekopieerd naar volgend jaar",
       maxYearReached: "Maximumjaar bereikt",
       langGroup: "Taal",
-      printPdf: "Afdrukken / PDF",
-      export: "Exporteren",
-      import: "Importeren",
-      hint: "Op je telefoon horizontaal scrollen. Totalen werken als in je sheet: elke rij telt de maanden op; elke kolom telt de uitgaven van die maand. Importeer JSON of een Google Sheet CSV (Bestand → Downloaden → Komma-gescheiden).",
+      printPdf: "Afdrukken / PDF bewaren",
+      hint: "Op je telefoon horizontaal scrollen. Totalen werken als in je sheet: elke rij telt de maanden op; elke kolom telt de uitgaven van die maand. Gebruik Afdrukken / PDF bewaren en kies «Opslaan als PDF» (of je printer) om een kopie te bewaren.",
       panelExpenses: "Uitgaven per maand",
       searchBills: "Facturen zoeken",
       searchBillsPlaceholder: "Zoek op factuurnaam…",
@@ -485,8 +475,6 @@
       monthCopied: "Maand gekopieerd",
       saved: "Opgeslagen",
       couldNotSave: "Kon niet opslaan",
-      badImport: "Onbekend bestandsformaat.",
-      badJson: "JSON kon niet worden gelezen.",
       colComment: "Opmerking",
       salaryShort: "Budget / Salaris",
       cellCommentAria: "Opmerking bij dit veld",
@@ -887,10 +875,6 @@
       addBtn.setAttribute("title", t("addBillShortcutTitle"));
       addBtn.setAttribute("aria-keyshortcuts", "Control+N Meta+N");
     }
-    const exp = document.getElementById("btn-export");
-    if (exp) exp.textContent = t("export");
-    const imp = document.getElementById("i18n-import-label");
-    if (imp) imp.textContent = t("import");
     const thBill = document.getElementById("th-bill");
     if (thBill) {
       thBill.textContent = t("colBill");
@@ -1038,8 +1022,6 @@
     btnResetYear: document.getElementById("btn-reset-year"),
     btnPrint: document.getElementById("btn-print"),
     btnAddCat: document.getElementById("btn-add-cat"),
-    btnExport: document.getElementById("btn-export"),
-    importFile: document.getElementById("import-file"),
     cellContextMenu: document.getElementById("cell-context-menu"),
     cellContextCut: document.getElementById("cell-context-cut"),
     cellContextCopy: document.getElementById("cell-context-copy"),
@@ -1182,128 +1164,6 @@
     if (t === "" || t === "-" || t === "—" || t === "!") return 0;
     const n = parseFloat(t.replace(/[$€£]/g, "").replace(/,/g, "").replace(/\s/g, ""));
     return Number.isFinite(n) ? n : 0;
-  }
-
-  function parseCsvRow(line) {
-    const cells = [];
-    let cur = "";
-    let i = 0;
-    let inQuotes = false;
-    while (i < line.length) {
-      const ch = line[i];
-      if (inQuotes) {
-        if (ch === '"') {
-          if (line[i + 1] === '"') {
-            cur += '"';
-            i += 2;
-            continue;
-          }
-          inQuotes = false;
-          i++;
-          continue;
-        }
-        cur += ch;
-        i++;
-        continue;
-      }
-      if (ch === '"') {
-        inQuotes = true;
-        i++;
-        continue;
-      }
-      if (ch === ",") {
-        cells.push(cur);
-        cur = "";
-        i++;
-        continue;
-      }
-      cur += ch;
-      i++;
-    }
-    cells.push(cur);
-    return cells;
-  }
-
-  function sheetCellToInput(v) {
-    if (v == null) return "";
-    let t = String(v).trim();
-    if (t === "" || t === "-" || t === "—" || t === "!") return "";
-    t = t.replace(/[$€£]/g, "").replace(/,/g, "").replace(/\s/g, "");
-    const n = parseFloat(t);
-    if (!Number.isFinite(n) || n === 0) return "";
-    return String(n);
-  }
-
-  function importGoogleBudgetCsv(text) {
-    text = String(text || "").replace(/^\uFEFF/, "");
-    const lines = text.split(/\r?\n/).filter((ln) => ln.length > 0);
-    if (lines.length < 3) return null;
-
-    let headerIdx = -1;
-    let monthStart = -1;
-    for (let i = 0; i < Math.min(lines.length, 8); i++) {
-      const c = parseCsvRow(lines[i]);
-      const j = c.findIndex((x) => /^january$/i.test(String(x).trim()));
-      if (j >= 0) {
-        headerIdx = i;
-        monthStart = j;
-        break;
-      }
-    }
-    if (headerIdx < 0 || monthStart < 0) return null;
-
-    let year = new Date().getFullYear();
-    for (let i = 0; i <= headerIdx; i++) {
-      const m = lines[i].match(/Budget\s+(20\d{2})/i);
-      if (m) year = parseInt(m[1], 10);
-    }
-
-    let currency = "$";
-    if (!/\$/.test(text) && /€/.test(text)) currency = "€";
-    else if (/£/.test(text) && !/\$/.test(text)) currency = "£";
-
-    const categories = [];
-    let salary = emptyMonths();
-    let salaryRowComment = "";
-
-    for (let r = headerIdx + 1; r < lines.length; r++) {
-      const row = parseCsvRow(lines[r]);
-      const c0 = String(row[0] || "").trim();
-      const c1 = String(row[1] || "").trim();
-      if (/^total$/i.test(c0)) break;
-
-      const moSlice = row.slice(monthStart, monthStart + 12);
-      const moEmpty = moSlice.every((x) => !String(x || "").trim());
-      if (!c0 && !c1 && moEmpty) continue;
-      if (!c0 && !c1) continue;
-
-      const mo = [];
-      for (let k = 0; k < 12; k++) mo.push(sheetCellToInput(row[monthStart + k]));
-      const rowComment = String(row[monthStart + 13] || "").trim();
-
-      if (!c0 && /^(salary|selary)$/i.test(c1)) {
-        salary = padString12(mo);
-        salaryRowComment = rowComment;
-        continue;
-      }
-
-      if (c0) {
-        categories.push({
-          id: uid(),
-          name: c0,
-          ref: c1 || "",
-          months: padString12(mo),
-          comments: emptyMonths(),
-          rowComment,
-          tagColor: "",
-          locked: false,
-          recurring: false,
-        });
-      }
-    }
-
-    if (!categories.length) return null;
-    return { year, salary, categories, currency, salaryRowComment };
   }
 
   function formatMoney(n, currency) {
@@ -2910,17 +2770,7 @@
 
     const tdCom = document.createElement("td");
     tdCom.className = "cell-row-comment cell-row-comment-salary";
-    tdCom.appendChild(
-      buildRowCommentInput(
-        state.salaryRowComment,
-        (value) => {
-          state.salaryRowComment = value;
-          scheduleSave();
-        },
-        false,
-        { rowLabel: t("salaryShort") }
-      )
-    );
+    tdCom.setAttribute("aria-hidden", "true");
 
     for (let m = 0; m < 12; m++) {
       el.salaryBlock.appendChild(
@@ -3215,61 +3065,9 @@
     el.btnAddCat.addEventListener("click", () => addNewBillRow());
   }
 
-  el.btnExport.addEventListener("click", () => {
-    const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = "nas-budget-" + state.year + ".json";
-    a.click();
-    URL.revokeObjectURL(a.href);
-  });
-
   if (el.btnUndoDelete) {
     el.btnUndoDelete.addEventListener("click", () => undoLastRowAction());
   }
-
-  el.importFile.addEventListener("change", () => {
-    const f = el.importFile.files && el.importFile.files[0];
-    if (!f) return;
-    const r = new FileReader();
-    r.onload = () => {
-      const text = String(r.result || "").replace(/^\uFEFF/, "");
-      try {
-        const d = JSON.parse(text);
-        if (d.version === 2) {
-          state = normalizeState(d);
-        } else if (d.income || d.expenses) {
-          state = migrateV1(d);
-        } else {
-          alert(t("badImport"));
-          el.importFile.value = "";
-          return;
-        }
-        scheduleSave();
-        renderAll();
-      } catch {
-        const csv = importGoogleBudgetCsv(text);
-        if (csv) {
-          state = normalizeState({
-            version: 2,
-            locale: state.locale,
-            year: csv.year,
-            currency: csv.currency || state.currency,
-            categories: csv.categories,
-            salary: csv.salary,
-            salaryComments: padString12(state.salaryComments),
-            notes: state.notes,
-          });
-          scheduleSave();
-          renderAll();
-        } else {
-          alert(t("badImport"));
-        }
-      }
-      el.importFile.value = "";
-    };
-    r.readAsText(f);
-  });
 
   document.querySelectorAll(".btn-lang").forEach((btn) => {
     btn.addEventListener("click", () => setLocale(btn.getAttribute("data-locale")));

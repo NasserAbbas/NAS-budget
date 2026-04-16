@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="NAS" />
   <title>NAS — Budget</title>
-  <link rel="icon" type="image/png" href="assets/logo.png" />
+  <link rel="icon" type="image/png" href="assets/logo.png" id="favicon" />
   <link rel="manifest" href="manifest.json" />
   <link rel="stylesheet" href="styles.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -51,11 +51,6 @@
           </select>
         </label>
         <button type="button" class="btn btn-ghost btn-with-icon icon-print" id="btn-print"></button>
-        <button type="button" class="btn btn-ghost" id="btn-export">Export</button>
-        <label class="btn btn-ghost file-label">
-          <span id="i18n-import-label">Import</span>
-          <input type="file" id="import-file" accept=".json,application/json,.csv,text/csv" hidden />
-        </label>
       </div>
     </header>
 
@@ -208,6 +203,15 @@
       </div>
     </footer>
   </div>
+  <script>
+    (function () {
+      var v = String(Date.now());
+      var fav = document.getElementById("favicon");
+      if (fav) fav.setAttribute("href", "assets/logo.png?v=" + v);
+      var logo = document.querySelector(".logo-img");
+      if (logo) logo.setAttribute("src", "assets/logo.png?v=" + v);
+    })();
+  </script>
   <script src="app.js"></script>
 </body>
 </html>
